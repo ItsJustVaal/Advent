@@ -59,7 +59,8 @@ def checkRight(currIndex, row):
 
 
 def checkIfSymbol(char):
-    if not char.isdigit() and not char == '.' and (ord(char) <= 64 or ord(char) >= 91 and ord(char) <= 96 or ord(char) >= 123 and ord(char) <= 126):
+    if char == '*':
+        # if not char.isdigit() and not char == '.' and (ord(char) <= 64 or ord(char) >= 91 and ord(char) <= 96 or ord(char) >= 123 and ord(char) <= 126):
         return True
     return False
 
@@ -75,9 +76,51 @@ def checkColOutOfBounds(currRow):
         return True
     return False
 
+# P1
+# nums = []
+# for i, line in enumerate(lines):
+#     for j, char in enumerate(line):
+#         if checkIfSymbol(char):
+#             checkUp = checkUpDown(j, lines[i - 1], i)
+#             checkDown = checkUpDown(j, lines[i + 1], i)
+#             if checkUp:
+#                 checkleft = checkLeft(j, lines[i - 1])
+#                 checkright = checkRight(j, lines[i - 1])
 
+#                 nums.append(int(checkleft + checkright))
+#             else:
+#                 checkLeftDiag = checkDiagLeft(j, lines[i - 1])
+#                 checkRightDiag = checkDiagRight(j, lines[i - 1])
+#                 if checkLeftDiag:
+#                     nums.append(int(checkLeftDiag))
+#                 if checkRightDiag:
+#                     nums.append(int(checkRightDiag))
+
+#             if checkDown:
+#                 checkleft = checkLeft(j, lines[i + 1])
+#                 checkright = checkRight(j, lines[i + 1])
+
+#                 nums.append(int(checkleft + checkright))
+#             else:
+#                 checkLeftDiag = checkDiagLeft(j, lines[i + 1])
+#                 checkRightDiag = checkDiagRight(j, lines[i + 1])
+#                 if checkLeftDiag:
+#                     nums.append(int(checkLeftDiag))
+#                 if checkRightDiag:
+#                     nums.append(int(checkRightDiag))
+
+#             checkleft = checkLeft(j, line)
+#             checkright = checkRight(j, line)
+#             if checkleft:
+#                 nums.append(int(checkleft))
+#             if checkright:
+#                 nums.append(int(checkright))
+
+
+# P2
 nums = []
 for i, line in enumerate(lines):
+    tmp = []
     for j, char in enumerate(line):
         if checkIfSymbol(char):
             checkUp = checkUpDown(j, lines[i - 1], i)
@@ -86,33 +129,36 @@ for i, line in enumerate(lines):
                 checkleft = checkLeft(j, lines[i - 1])
                 checkright = checkRight(j, lines[i - 1])
 
-                nums.append(int(checkleft + checkright))
+                tmp.append(int(checkleft + checkright))
             else:
                 checkLeftDiag = checkDiagLeft(j, lines[i - 1])
                 checkRightDiag = checkDiagRight(j, lines[i - 1])
                 if checkLeftDiag:
-                    nums.append(int(checkLeftDiag))
+                    tmp.append(int(checkLeftDiag))
                 if checkRightDiag:
-                    nums.append(int(checkRightDiag))
-
+                    tmp.append(int(checkRightDiag))
             if checkDown:
                 checkleft = checkLeft(j, lines[i + 1])
                 checkright = checkRight(j, lines[i + 1])
 
-                nums.append(int(checkleft + checkright))
+                tmp.append(int(checkleft + checkright))
             else:
                 checkLeftDiag = checkDiagLeft(j, lines[i + 1])
                 checkRightDiag = checkDiagRight(j, lines[i + 1])
                 if checkLeftDiag:
-                    nums.append(int(checkLeftDiag))
+                    tmp.append(int(checkLeftDiag))
                 if checkRightDiag:
-                    nums.append(int(checkRightDiag))
-
+                    tmp.append(int(checkRightDiag))
             checkleft = checkLeft(j, line)
             checkright = checkRight(j, line)
             if checkleft:
-                nums.append(int(checkleft))
+                tmp.append(int(checkleft))
             if checkright:
-                nums.append(int(checkright))
+                tmp.append(int(checkright))
+            print(tmp)
+            if len(tmp) == 2:
+                print(f"LEN IS 2 {tmp}")
+                nums.append(tmp[0] * tmp[1])
+            tmp = []
 
 print(sum(nums))
