@@ -42,3 +42,5 @@ for seed in seeds:
     print(f"END OF SEED {seed}, LOWEST IS {lowest}")
 
 print(lowest)
+
+# Part 2
