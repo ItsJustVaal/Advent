@@ -1,29 +1,37 @@
+from numpy import Infinity
+
+
 with open("../inputs/p5input.txt") as file:
     lines = [line.strip() for line in file.readlines()]
-    seeds = [int(seed) for seed in lines[0].split(": ")[1].strip().split(" ")]
+    seedsInit = list(map(int, lines[0].split(" ")[1:]))
 
+seeds = [(seedsInit[x], seedsInit[x + 1]) for x in range(0, len(seedsInit), 2)]
+print(seeds)
 
-maps = {}
+maps = []
 currMap = ""
 lowest = 0
 
-for line in lines[2:]:
-    if 'map' in line:
-        maps[line] = []
-        currMap = line
-    elif line:
-        maps[currMap].extend(line.split("\n"))
+i = 2
+while i < len(lines):
+    start, _, finish = lines[i].split(" ")[0].split("-")
+    maps.append([])
+
+    i += 1
+    while i < len(lines) and not lines[i] == "":
+        dStart, sStart, rng = map(int, lines[i].split())
+        maps[-1].append((dStart, sStart, rng))
+        i += 1
+
+    maps[-1].sort(key=lambda x: x[1])
+    i += 1
 
 # Part 1
 for seed in seeds:
     next, tmp = seed, 0
-    for map in maps.items():
-        print(f"CURRENT MAP: {map[0]}")
-        for values in map[1]:
-            print(f"START OF VALUES {values}")
-            dest = int(values.split('\n')[0].split(" ")[0])
-            source = int(values.split('\n')[0].split(" ")[1])
-            rng = int(values.split('\n')[0].split(" ")[2])
+    for map in maps:
+        print(f"CURRENT MAP: {map}")
+        for dest, source, rng in map:
             if next in range(source, source + rng + 1):
                 tmp = next - source
                 if dest + tmp <= dest + rng:
@@ -32,15 +40,60 @@ for seed in seeds:
                 else:
                     next = seed
             else:
-                print(f"NEXT IS {next}")
-                print(f"END OF VALUES {values}")
                 continue
-            print(f"NEXT IS {next}")
-            print(f"END OF VALUES {values}")
+
     if lowest == 0 or next <= lowest:
         lowest = next
-    print(f"END OF SEED {seed}, LOWEST IS {lowest}")
+
 
 print(lowest)
 
-# Part 2
+# # Part 2
+
+# This was way more difficult and im still not sure I totally understand what is going on
+
+
+def newMap(low, high, map):
+    newMap = []
+    for dest, source, rng in map:
+
+        end = source + rng - 1
+        shift = dest - source
+        if not (end < low or source > high):
+            newMap.append((max(source, low), min(end, high), shift))
+
+    for x, item in enumerate(newMap):
+        left, right, dist = item
+
+        yield (left + dist, right + dist)
+
+        if x < len(newMap) - 1 and newMap[x + 1][0] > right + 1:
+            yield (right + 1, newMap[x + 1][0] - 1)
+
+    if len(newMap) == 0:
+        yield (low, high)
+        return
+
+    if newMap[0][0] != low:
+        yield (low, newMap[0][0] - 1)
+    if newMap[-1][1] != high:
+        yield (newMap[-1][1] + 1, high)
+
+
+lowest = Infinity
+
+for start, range in seeds:
+    curr = [(start, start + range - 1)]
+    new = []
+
+    for map in maps:
+        for low, high in curr:
+            for newM in newMap(low, high, map):
+                new.append(newM)
+
+        curr, new = new, []
+
+    for low, high in curr:
+        lowest = min(lowest, low)
+
+print(lowest)
